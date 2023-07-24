@@ -27,7 +27,7 @@ $insert_query = "INSERT INTO datospersonales (Apellido_paterno, Apellido_materno
 
 if (mysqli_query($cn, $insert_query)) {
     mysqli_close($cn);
-    echo "<script>alert('Guardado exitoso.'); window.location.href='index.php';</script>";
+    echo "<script>; window.location.href='opciones.php';</script>";
     exit;
 } else {
     echo "Error al insertar los datos personales: " . mysqli_error($cn);
