@@ -1,0 +1,48 @@
+
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+
+}
+
+#titulo {
+    margin: 0;
+    background-color: #333;
+}
+
+ .enlaces_superiores {
+
+    font-size: 20px;
+    color: black;
+    text-decoration: none; /* Quita el subrayado del enlace */
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease; /* Agrega una transición suave */
+}
+
+.enlaces_superiores:hover {
+    background-color: #BCBCBC; /* Cambia el color de fondo al hacer hover */
+}
+
+
+
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+
+

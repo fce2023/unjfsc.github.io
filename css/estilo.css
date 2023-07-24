@@ -1,0 +1,32 @@
+body{
+
+
+background-image: url("../img/fondo.png");
+background-size: cover;
+background-repeat: repeat-y;
+margin:0px;
+padding:0px;
+
+
+}
+
+
+
+
+#cabecera{
+
+padding:0px;
+width:100%;
+max-height: 250px;
+background-color: white;
+border:0px;
+margin:0px;
+display:block;
+}
+
+#sub{
+      text-align: 
+right;
+      font-size: 40px;
+      color: black;
+   }
