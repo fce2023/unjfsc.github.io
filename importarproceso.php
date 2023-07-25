@@ -1,91 +1,124 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 header('Content-Type: text/html; charset=UTF-8');
 mb_internal_encoding('UTF-8');
 
 include("conexion.php");
-require_once 'librerias/vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-if(isset($_POST["importar"])) {
-    // Verificar si se ha seleccionado un archivo para importar
-    if(isset($_FILES['archivo']) && $_FILES['archivo']['error'] == UPLOAD_ERR_OK) {
-        $archivo = $_FILES['archivo']['tmp_name'];
+if (isset($_POST["importar"])) {
+    if ($_FILES["archivo"]["name"]) {
+        $filename = $_FILES["archivo"]["tmp_name"];
 
-        // Cargar el archivo Excel y obtener los datos
-        $spreadsheet = IOFactory::load($archivo);
-        $worksheet = $spreadsheet->getActiveSheet();
-        $datos = $worksheet->toArray();
-
-        // Eliminar la primera fila (encabezados)
-        array_shift($datos);
-
-        // Insertar los datos en la base de datos
-        foreach ($datos as $fila) {
-            $apellidoPaterno = $fila[0];
-            $apellidoMaterno = $fila[1];
-            $nombres = $fila[2];
-            $dni = $fila[3];
-            $sexo = $fila[4];
-            $fechaNacimiento = $fila[5];
-            $correo = $fila[6];
-            $celular = $fila[7];
-            $cargo = $fila[8];
-            $facultad = $fila[9];
-            $categoria = $fila[10];
-            $dedicacion = $fila[11];
-            $maestria = $fila[12];
-            $grado = $fila[13];
-
-            // Verificar el formato de la fecha de nacimiento
-            $fechaNacimientoObj = DateTime::createFromFormat('d/m/Y', $fechaNacimiento);
-            if ($fechaNacimientoObj === false) {
-                echo "Error: Formato de fecha de nacimiento inválido";
-                continue; // Pasar a la siguiente iteración del bucle
+        // Cargar el archivo Excel usando PhpSpreadsheet
+        $spreadsheet = IOFactory::load($filename);
+        $sheet = $spreadsheet->getActiveSheet();
+        // Variable para omitir la primera fila (encabezados)
+        $firstRow = true;
+        // Leer los datos del archivo Excel y realizar la inserción o actualización en la tabla datospersonales
+        foreach ($sheet->getRowIterator() as $row) {
+            // Omitir la primera fila (encabezados)
+            if ($firstRow) {
+                $firstRow = false;
+                continue;
             }
 
-            // Obtener la fecha de nacimiento en el formato adecuado
-            $fechaNacimiento = $fechaNacimientoObj->format('Y-m-d');
+            $rowData = $row->getCellIterator();
+            $data = array();
+            foreach ($rowData as $cell) {
+                $data[] = mb_convert_encoding($cell->getValue(), 'UTF-8', 'auto');
+            }
 
-            // Realizar las consultas para obtener los IDs correspondientes a los nombres
-            $cargoQuery = "SELECT id_cargo FROM cargo WHERE nomcargo = '$cargo'";
-            $facultadQuery = "SELECT id_facultad FROM facultad WHERE nomfacultad = '$facultad'";
-            $categoriaQuery = "SELECT id_categoria FROM categoria WHERE nomcategoria = '$categoria'";
-            $dedicacionQuery = "SELECT id_dedicacion FROM dedicacion WHERE nomdedicacion = '$dedicacion'";
-            $maestriaQuery = "SELECT id_maestria FROM maestria WHERE nommaestria = '$maestria'";
-            $gradoQuery = "SELECT id_grado FROM grado WHERE nomgrado = '$grado'";
+            $id_datos_personales = isset($data[0]) ? $data[0] : "";
+            $Apellido_paterno = isset($data[1]) ? $data[1] : "";
+            $Apellido_materno = isset($data[2]) ? $data[2] : "";
+            $Nombres = isset($data[3]) ? $data[3] : "";
+            $Dni = isset($data[4]) ? $data[4] : "";
+            $SEXO = isset($data[5]) ? $data[5] : "";
+            $Fecha_nacimiento = isset($data[6]) ? $data[6] : "";
+            $correo = isset($data[7]) ? $data[7] : "";
+            $Celular = isset($data[8]) ? $data[8] : "";
+            $Cargo = isset($data[9]) ? $data[9] : "";
+            $Facultad = isset($data[10]) ? $data[10] : "";
+            $Categoria = isset($data[11]) ? $data[11] : "";
+            $Dedicacion = isset($data[12]) ? $data[12] : "";
+            $Maestria = isset($data[13]) ? $data[13] : "";
+            $Grado = isset($data[14]) ? $data[14] : "";
 
-            $cargoResult = mysqli_query($cn, $cargoQuery);
-            $facultadResult = mysqli_query($cn, $facultadQuery);
-            $categoriaResult= mysqli_query($cn, $categoriaQuery);
-            $dedicacionResult = mysqli_query($cn, $dedicacionQuery);
-            $maestriaResult = mysqli_query($cn, $maestriaQuery);
-            $gradoResult = mysqli_query($cn, $gradoQuery);
+            // Obtener los IDs de las tablas foráneas usando los nombres
+            $query_cargo = "SELECT id_cargo FROM cargo WHERE nomcargo = '$Cargo'";
+            $result_cargo = mysqli_query($cn, $query_cargo);
+            $id_car = mysqli_fetch_assoc($result_cargo)['id_cargo'];
 
-            // Obtener los IDs correspondientes a los nombres
-            $idCargo = ($cargoRow = mysqli_fetch_assoc($cargoResult)) ? $cargoRow['id_cargo'] :```php
-0;
-            $idFacultad = ($facultadRow = mysqli_fetch_assoc($facultadResult)) ? $facultadRow['id_facultad'] : 0;
-            $idCategoria = ($categoriaRow = mysqli_fetch_assoc($categoriaResult)) ? $categoriaRow['id_categoria'] : 0;
-            $idDedicacion = ($dedicacionRow = mysqli_fetch_assoc($dedicacionResult)) ? $dedicacionRow['id_dedicacion'] : 0;
-            $idMaestria = ($maestriaRow = mysqli_fetch_assoc($maestriaResult)) ? $maestriaRow['id_maestria'] : 0;
-            $idGrado = ($gradoRow = mysqli_fetch_assoc($gradoResult)) ? $gradoRow['id_grado'] : 0;
+            $query_facultad = "SELECT id_facultad FROM facultad WHERE nomfacultad = '$Facultad'";
+            $result_facultad = mysqli_query($cn, $query_facultad);
+            $id_Facu = mysqli_fetch_assoc($result_facultad)['id_facultad'];
 
-            // Insertar los datos en la tabla datospersonales
-            $sql = "INSERT INTO datospersonales (Apellido_paterno, Apellido_materno, Nombres, Dni, SEXO, Fecha_nacimiento, correo, Celular, id_car, id_Facu, id_cate, id_Dedi, id_maes, id_gra) 
-                    VALUES ('$apellidoPaterno', '$apellidoMaterno', '$nombres', '$dni', '$sexo', '$fechaNacimiento', '$correo', '$celular', '$idCargo', '$idFacultad', '$idCategoria', '$idDedicacion', '$idMaestria', '$idGrado')";
+            $query_categoria = "SELECT id_categoria FROM categoria WHERE nomcategoria = '$Categoria'";
+            $result_categoria = mysqli_query($cn, $query_categoria);
+            $id_cate = mysqli_fetch_assoc($result_categoria)['id_categoria'];
 
-            if (mysqli_query($cn, $sql)) {
-                echo "Datos insertados correctamente";
+            $query_dedicacion = "SELECT id_dedicacion FROM dedicacion WHERE nomdedicacion = '$Dedicacion'";
+            $result_dedicacion = mysqli_query($cn, $query_dedicacion);
+            $id_Dedi = mysqli_fetch_assoc($result_dedicacion)['id_dedicacion'];
+
+            $query_maestria = "SELECT id_maestria FROM maestria WHERE nommaestria = '$Maestria'";
+            $result_maestria = mysqli_query($cn, $query_maestria);
+            $id_maes = mysqli_fetch_assoc($result_maestria)['id_maestria'];
+
+            $query_grado = "SELECT id_grado FROM grado WHERE nomgrado = '$Grado'";
+            $result_grado = mysqli_query($cn, $query_grado);
+            $id_gra = mysqli_fetch_assoc($result_grado)['id_grado'];
+
+            // Verificar si el registro ya existe en la tabla datospersonales
+            $query_select = "SELECT * FROM datospersonales WHERE id_datos_personales = '$id_datos_personales'";
+            $result = mysqli_query($cn, $query_select);
+
+            if (mysqli_num_rows($result) > 0) {
+                // El registro ya existe, realizar una actualización
+                $query_update = "UPDATE datospersonales SET
+                    Apellido_paterno = '$Apellido_paterno',
+                    Apellido_materno = '$Apellido_materno',
+                    Nombres = '$Nombres',
+                    Dni = '$Dni',
+                    SEXO = '$SEXO',
+                    Fecha_nacimiento = '$Fecha_nacimiento',
+                    correo = '$correo',
+                    Celular = '$Celular',
+                    id_car = '$id_car',
+                    id_Facu = '$id_Facu',
+                    id_cate = '$id_cate',
+                    id_Dedi = '$id_Dedi',
+                    id_maes = '$id_maes',
+                    id_gra = '$id_gra'
+                    WHERE id_datos_personales = '$id_datos_personales'";
+
+                mysqli_query($cn, $query_update);
             } else {
-                echo "Error al insertar los datos: " . mysqli_error($cn);
+                // El registro no existe, realizar una inserción
+                $query_insert = "INSERT INTO datospersonales (id_datos_personales, Apellido_paterno, Apellido_materno, Nombres, Dni, SEXO, Fecha_nacimiento, correo, Celular, id_car, id_Facu, id_cate, id_Dedi, id_maes, id_gra) VALUES ('$id_datos_personales', '$Apellido_paterno', '$Apellido_materno', '$Nombres', '$Dni', '$SEXO', '$Fecha_nacimiento', '$correo', '$Celular', '$id_car', '$id_Facu', '$id_cate', '$id_Dedi', '$id_maes', '$id_gra')";
+
+                mysqli_query($cn, $query_insert);
             }
         }
 
-        // Cerrar la conexión a la base de datos
-        mysqli_close($cn);
+        // Liberar memoria
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+
+        // Redireccionar al índice con un mensaje de éxito
+        header("Location: index.php?mensaje=Importación exitosa");
+        exit;
     } else {
-        echo "Error al cargar el archivo";
+        // Redireccionar al índice con un mensaje de error
+        header("Location: index.php?mensaje=No se seleccionó ningún archivo");
+        exit;
     }
 }
+
+mysqli_close($cn);
 ?>

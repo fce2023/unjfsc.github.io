@@ -64,4 +64,3 @@ LEFT JOIN grado g ON dp.id_gra = g.id_grado";
     exit;
 }
 ?>
-
