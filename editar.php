@@ -1,7 +1,7 @@
 <?php
 include("conexion.php");
 
-include("mas_informacion.php");
+//include("mas_informacion.php");
 
 $id = $_GET["id"];
 

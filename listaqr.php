@@ -42,7 +42,7 @@ $totalPaginas = ceil($totalRegistros / $elementosPorPagina);
 //$resultado = $cn->query($sql);
 
 ?>
-<h1 style="text-align: center; font-size: 32px; color: #4CAF50; margin-top: 20px; font-weight: bold;">Lista de Docentes</h1>
+<h1 style="text-align: center; font-size: 32px; color: #1E88E5; margin-top: 20px; font-weight: bold;">Lista de Docentes</h1>
 
 <?php
 $sqlCumpleañosCercano = "SELECT Fecha_nacimiento, Apellido_paterno, Apellido_materno, Nombres, id_gra

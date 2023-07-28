@@ -2,15 +2,16 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Lista de Docentes</title>
+  <title>Lista</title>
   <style>
     body {
       font-family: Arial, sans-serif;
     }
-    
-    h1 {
-      color: #333;
+    title {
+
+        color: blue;
     }
+   
     
     table {
       width: 100%;
@@ -24,13 +25,13 @@
     }
     
     th {
-      background-color: #f2f2f2;
+      background-color: #black; /* Typo corrected from blak to black */
       color: #333;
-      font-weight: bold;
+      font-weight: cceeff;
     }
     
     td {
-      background-color: #fff;
+      background-color: #cceeff; /* Changed from #fff (white) to #cceeff (celeste, medium blue) */
       color: #333;
     }
     
@@ -44,11 +45,11 @@
       text-decoration: none;
       color: #333;
       border: 1px solid #ccc;
-      background-color: #f2f2f2;
+      background-color: #black;
     }
     
     .pagination a.current {
-      background-color: #4CAF50;
+      background-color: #f44336;
       color: white;
     }
     
@@ -77,7 +78,9 @@
     .delete-link:hover {
       text-decoration: underline;
     }
-  </style>
+</style>
+
+ 
 </head>
 <body>
 
@@ -123,7 +126,7 @@ $totalPaginas = ceil($totalRegistros / $elementosPorPagina);
 //$resultado = $cn->query($sql);
 
 ?>
-<h1 style="text-align: center; font-size: 32px; color: #4CAF50; margin-top: 20px; font-weight: bold;">Lista de Docentes</h1>
+<h1 style="text-align: center; font-size: 32px; color: #1E88E5; margin-top: 20px; font-weight: bold;">Lista de Docentes</h1>
 
 <?php
 $sqlCumpleañosCercano = "SELECT Fecha_nacimiento, Apellido_paterno, Apellido_materno, Nombres, id_gra

@@ -83,5 +83,21 @@ function convertirCaracteresEspeciales($string) {
             alert(mensaje);
         }
     </script>
+
+    <!-- Agregar una barra de progreso -->
+<div id="progress-bar-container" style="display:none;">
+    <div id="progress-bar" style="width: 0%;">0%</div>
+</div>
+
+
+<!-- Agregar el código JavaScript para mostrar la barra de progreso cuando se esté importando -->
+<script>
+    // Mostrar la barra de progreso si el progreso está en curso
+    if (window.location.search.includes("progress=1")) {
+        document.getElementById("progress-bar-container").style.display = "block";
+    }
+</script>
+
+
 </body>
 </html>
